@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Price Prediction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            margin-top: 200px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: block;
+            color: #555;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 12px 16px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            color: #333;
+            background-color: #fafafa;
+            transition: border-color 0.3s ease;
+        }
+        input:focus, select:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+        #result {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        /* Ensure proper visibility and adjust spacing */
+        .form-group input, .form-group select {
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+
+        .container {
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Car Price Prediction</h2>
+    <form id="prediction-form">
+        <div class="form-group">
+            <label for="year">Year of Manufacture:</label>
+            <input type="number" id="year" required>
+        </div>
+
+        <div class="form-group">
+            <label for="present_price">Present Price (in lakhs):</label>
+            <input type="number" id="present_price" step="0.01" required>
+        </div>
+
+        <div class="form-group">
+            <label for="kms_driven">Kilometers Driven:</label>
+            <input type="number" id="kms_driven" required>
+        </div>
+
+        <div class="form-group">
+            <label for="fuel_type">Fuel Type:</label>
+            <select id="fuel_type" required>
+                <option value="0">Petrol</option>
+                <option value="1">Diesel</option>
+                <option value="2">CNG</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="seller_type">Seller Type:</label>
+            <select id="seller_type" required>
+                <option value="0">Individual</option>
+                <option value="1">Dealer</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="transmission">Transmission:</label>
+            <select id="transmission" required>
+                <option value="0">Manual</option>
+                <option value="1">Automatic</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="owner">Number of Owners:</label>
+            <input type="number" id="owner" required>
+        </div>
+
+        <button type="submit">Predict Price</button>
+    </form>
+
+    <div id="result"></div>
+
+    <div class="footer">
+        <p>&copy; 2024 Car Price Prediction. All Rights Reserved.</p>
+    </div>
+</div>
+
+<script>
+    document.getElementById('prediction-form').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        // Collect form data
+        const carData = {
+            year: document.getElementById('year').value,
+            present_price: document.getElementById('present_price').value,
+            kms_driven: document.getElementById('kms_driven').value,
+            fuel_type: document.getElementById('fuel_type').value,  // Value will be 0, 1, or 2 based on selection
+            seller_type: document.getElementById('seller_type').value,  // Value will be 0 or 1 based on selection
+            transmission: document.getElementById('transmission').value, // Value will be 0 (Manual) or 1 (Automatic)
+            owner: document.getElementById('owner').value
+        };
+        console.log(carData);
+
+        //Send data to the backend for prediction
+        const response = await fetch('http://127.0.0.1:8000/predict/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(carData)
+        });
+
+        const result = await response.json();
+        document.getElementById('result').innerText = 'Predicted Price: ₹ ' + result.predicted_price.toFixed(2);
+    });
+</script>
+
+</body>
+</html>
