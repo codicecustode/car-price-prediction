@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Request
 from pydantic import BaseModel
 import joblib
-from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -12,15 +11,6 @@ model = joblib.load('car_price_prediction_model.pkl')
 
 # Initialize FastAPI
 app = FastAPI()
-
-# Allow all origins for testing (in production, you can limit the allowed origins)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins. You can specify your frontend URL in production
-    allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods
-    allow_headers=["*"],  # Allow all headers
-)
 
 # Set up Jinja2 templates
 templates = Jinja2Templates(directory="templates")

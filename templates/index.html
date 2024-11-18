@@ -176,7 +176,7 @@
         console.log(carData);
 
         //Send data to the backend for prediction
-        const response = await fetch('', {
+        const response = await fetch('/predict', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
