@@ -1,8 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from pydantic import BaseModel
 import joblib
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 # Load the trained model and scaler
 model = joblib.load('car_price_prediction_model.pkl')
@@ -20,6 +22,9 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
+# Set up Jinja2 templates
+templates = Jinja2Templates(directory="templates")
+
 # Define a Pydantic model for the input data
 class CarData(BaseModel):
     year: int
@@ -30,9 +35,15 @@ class CarData(BaseModel):
     transmission: int
     owner: int
 
+@app.get("/", response_class=HTMLResponse)
+async def serve_index_page(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
 @app.post("/predict")
 def predict_car_price(car_data: CarData):
     # Convert the input data into a pandas DataFrame
+    print(car_data)
     input_data = pd.DataFrame([{
         'Year': car_data.year,
         'Present_Price': car_data.present_price,
