@@ -5,9 +5,11 @@ import pandas as pd
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-# Load the trained model and scaler
-model = joblib.load('car_price_prediction_model.pkl')
-#scaler = joblib.load('scaler.pkl')  # Use a scaler if you applied scaling during training
+# Load the trained model 
+try:
+    model = joblib.load('modal/car_price_prediction_model.pkl')
+except Exception as e:
+    print(f"Error loading the model: {e}")
 
 # Initialize FastAPI
 app = FastAPI()
@@ -43,11 +45,6 @@ def predict_car_price(car_data: CarData):
         'Transmission': car_data.transmission,
         'Owner': car_data.owner
     }])
-
-    print(input_data)
-
-    # Apply scaling (if needed)
-    #input_data_scaled = scaler.transform(input_data)  # Apply the scaler to the input data if scaling was used during training
 
     # Make the prediction using the trained model
     predicted_price = model.predict(input_data)
